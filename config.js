@@ -4,6 +4,6 @@
    Si se dejan vacíos, la Estación funciona solo en este aparato, sin cuenta. */
 window.ESTACION = {
   supabaseUrl: 'https://rkunylxrbnndijyvisfj.supabase.co',
-  supabaseKey: '',
+  supabaseKey: 'sb_publishable_KhfVpiIf3dmRJ7C9ZJcwEw_ypS98OM7',
   rutinatorUrl: 'https://rutinator-v2.vercel.app/'
 };

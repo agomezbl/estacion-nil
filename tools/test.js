@@ -30,7 +30,7 @@ const CHRONO={name:'Nil',xp:1250,introSeen:true,ch:{c1:{done:6,stars:{'1-1':3,'1
 (async()=>{const b=await chromium.launch();const errs=[];const res=[];
  for(const mode of ['local','nube']){for(const vp of [{w:390,h:844,n:'movil'},{w:820,h:1180,n:'tableta'},{w:1180,h:820,n:'tableta-h'},{w:1440,h:900,n:'pc'}]){
   const ctx=await b.newContext({viewport:{width:vp.w,height:vp.h},hasTouch:vp.n!=='pc',isMobile:vp.n==='movil'});
-  await ctx.route('**/supabase.min.js',r=>r.fulfill({contentType:'text/javascript',body:mode==='nube'?FAKE:''}));
+  await ctx.route('**/umd/supabase.js',r=>r.fulfill({contentType:'text/javascript',body:mode==='nube'?FAKE:''}));
   await ctx.route('**/config.js',r=>r.fulfill({contentType:'text/javascript',body:mode==='nube'?CFG:'window.ESTACION={}'}));
   await ctx.addInitScript(c=>{if(!localStorage.getItem('chrono-ohm-v1'))localStorage.setItem('chrono-ohm-v1',JSON.stringify(c))},CHRONO);
   const p=await ctx.newPage();p.on('pageerror',e=>errs.push(`${mode}/${vp.n}: ${e.message}`));p.on('console',m=>{if(m.type()==='error')errs.push(`${mode}/${vp.n} consola: ${m.text()}`)});
