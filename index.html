@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<meta name="description" content="Estación Nil: colegio, notas, Rutinator y juegos en un solo panel.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Estación Nil</title>
+<style>
+:root{
+  --bg:#0b1020;--bg2:#0f1629;--card:#141c33;--card2:#1a2441;--line:#26324f;--line2:#33426a;
+  --ink:#eef2fb;--dim:#a9b4cf;--faint:#6f7c9c;
+  --cu:#f2a65a;--cu-d:#b8733d;--cy:#5ee0ff;--ok:#4fd18b;--bad:#ff6b5f;--vi:#b9a7ff;--gold:#ffd27a;
+  --r:18px;--sh:0 10px 30px rgba(0,0,0,.35);
+  --f:"Atkinson Hyperlegible","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;--fd:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--fm:ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;min-height:100vh;background:radial-gradient(1200px 600px at 80% -10%,rgba(94,224,255,.10),transparent 60%),radial-gradient(900px 500px at -10% 10%,rgba(242,166,90,.10),transparent 60%),var(--bg);color:var(--ink);font:400 17px/1.5 var(--f);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+button,input,textarea,select{font:inherit;color:inherit}
+a{color:var(--cy)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+/* cabecera */
+header.top{position:sticky;top:0;z-index:20;background:rgba(11,16,32,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.top-in{display:flex;align-items:center;gap:12px;min-height:66px}
+.logo{display:flex;align-items:center;gap:10px;font:800 19px var(--fd);letter-spacing:.02em;white-space:nowrap}.logo svg{width:36px;height:36px;flex:none}.logo span{color:var(--cu)}
+.lvl{display:flex;align-items:center;gap:8px;margin-left:auto;padding:6px 12px 6px 6px;border:1px solid var(--line2);border-radius:999px;background:var(--card);min-width:0}
+.lvl b{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--cu),var(--cu-d));color:#1f1206;font:800 14px var(--fd);flex:none}
+.lvl small{display:block;font:12px var(--fm);color:var(--dim);white-space:nowrap}.lvl .bar{height:5px;border-radius:3px;background:var(--line);overflow:hidden;width:92px}.lvl .bar i{display:block;height:100%;background:var(--cu)}
+.ibtn{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;border:1px solid var(--line2);background:var(--card);cursor:pointer;flex:none}
+.ibtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sync{width:10px;height:10px;border-radius:50%;background:var(--faint);flex:none}.sync.ok{background:var(--ok)}.sync.off{background:var(--gold)}.sync.err{background:var(--bad)}
+/* saludo */
+.hello{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:22px 0 14px;flex-wrap:wrap}
+.hello h1{margin:0;font:800 clamp(28px,6vw,44px)/1.1 var(--fd)}.hello h1 span{color:var(--cu)}
+.hello p{margin:4px 0 0;color:var(--dim)}
+.clock{font:700 clamp(30px,6vw,46px)/1 var(--fm);color:var(--cy);letter-spacing:.02em}
+/* rejilla */
+.grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media (min-width:760px){.grid{grid-template-columns:repeat(12,minmax(0,1fr))}.c-hoy{grid-column:span 7}.c-cole{grid-column:span 5}.c-notas{grid-column:span 7}.c-rut{grid-column:span 5}.c-juegos{grid-column:1/-1}}
+@media (min-width:1100px){.c-hoy{grid-column:span 5}.c-cole{grid-column:span 3}.c-rut{grid-column:span 4}.c-notas{grid-column:span 6}.c-juegos{grid-column:span 6}}
+.card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--sh);min-width:0}
+.card h2{display:flex;align-items:center;gap:10px;margin:0 0 14px;font:800 15px var(--fd);letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.card h2 .ico{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:var(--bg2);border:1px solid var(--line2)}
+.card h2 .ico svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.card h2 .act{margin-left:auto}
+.c-hoy h2{color:var(--cy)}.c-cole h2{color:var(--ok)}.c-notas h2{color:var(--gold)}.c-rut h2{color:var(--cu)}.c-juegos h2{color:var(--vi)}
+.muted{color:var(--dim)}.small{font-size:14px}
+/* ahora mismo */
+.now{display:flex;gap:14px;align-items:center;padding:14px;border-radius:14px;background:var(--bg2);border:1px solid var(--line2)}
+.now .big{font:800 20px/1.25 var(--fd)}.now .ic{font-size:30px;flex:none}
+.agenda{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:8px}
+.agenda li{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--bg2);border:1px solid var(--line)}
+.agenda .d{font:700 13px var(--fm);color:var(--cy);min-width:64px}.agenda .t{flex:1;min-width:0}.agenda li.done .t{text-decoration:line-through;color:var(--faint)}
+.empty{color:var(--faint);font-size:15px;margin:6px 0 0}
+/* enlaces del colegio */
+.links{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.link{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:118px;padding:14px 10px;border-radius:16px;border:1px solid var(--line2);background:var(--bg2);color:var(--ink);text-decoration:none;text-align:center;font:700 16px var(--fd);transition:transform .12s,border-color .2s}
+.link:active{transform:scale(.97)}.link:hover{border-color:var(--cy)}
+.link .lg{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font:900 22px var(--fd);letter-spacing:-.02em;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+.link.todo{border-style:dashed;color:var(--dim)}.link small{font:500 12px var(--f);color:var(--faint)}
+.link .x{position:absolute;top:6px;right:6px;width:32px;height:32px;border-radius:10px;border:1px solid var(--line2);background:var(--card);display:grid;place-items:center;cursor:pointer;color:var(--bad)}
+/* Rutinator */
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{padding:12px 10px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);text-align:center}
+.stat b{display:block;font:800 26px/1.1 var(--fd)}.stat span{font-size:13px;color:var(--dim)}
+.ring{width:64px;height:64px;margin:0 auto 4px;display:block}
+/* notas */
+.addnote{display:flex;gap:8px;flex-wrap:wrap}
+.addnote input[type=text]{flex:1 1 220px;min-width:0;min-height:50px;padding:0 14px;border-radius:14px;border:1px solid var(--line2);background:var(--bg2);outline:none}
+.addnote input[type=text]:focus{border-color:var(--gold)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line2);background:var(--bg2);cursor:pointer;font-size:14px;color:var(--dim)}
+.chip.on{border-color:var(--gold);color:var(--gold);background:rgba(255,210,122,.08)}
+.chip input[type=date]{background:transparent;border:0;color:inherit;font-size:14px;min-height:36px}
+.notes{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:8px}
+.note{display:flex;align-items:center;gap:12px;padding:10px 10px 10px 12px;border-radius:14px;background:var(--bg2);border:1px solid var(--line)}
+.note .tk{width:30px;height:30px;border-radius:9px;border:2px solid var(--line2);display:grid;place-items:center;cursor:pointer;flex:none;background:transparent}
+.note.done .tk{background:var(--ok);border-color:var(--ok)}.note.done .tk::after{content:"";width:9px;height:15px;border:solid #06210f;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-2px)}
+.note .t{flex:1;min-width:0;overflow-wrap:anywhere}.note.done .t{text-decoration:line-through;color:var(--faint)}
+.note .due{font:12px var(--fm);color:var(--gold);white-space:nowrap}.note .due.late{color:var(--bad)}
+.note .del{width:38px;height:38px;border-radius:10px;border:0;background:transparent;color:var(--faint);cursor:pointer;flex:none;font-size:20px}
+.note .del:hover{color:var(--bad)}
+/* juegos */
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.game{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;background:var(--bg2);border:1px solid var(--line2);border-top:4px solid var(--gc,var(--vi))}
+.game h3{margin:0;font:800 19px var(--fd)}.game .sub{font-size:13px;color:var(--dim)}
+.game .pb{height:10px;border-radius:5px;background:var(--line);overflow:hidden}.game .pb i{display:block;height:100%;background:var(--gc);transition:width .6s}
+.game .meta{display:flex;flex-wrap:wrap;gap:6px 12px;font:13px var(--fm);color:var(--dim)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border-radius:14px;border:1px solid var(--line2);background:var(--card2);color:var(--ink);cursor:pointer;font:700 15px var(--fd);text-decoration:none}
+.btn.pri{background:linear-gradient(180deg,#ffbf7a,var(--cu));color:#1f1206;border-color:transparent}
+.btn.sm{min-height:40px;padding:0 12px;font-size:14px}
+.btn:active{transform:translateY(1px)}.btn[disabled]{opacity:.5;cursor:not-allowed}
+/* navegación inferior (móvil) */
+nav.bottom{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(4,1fr);background:rgba(11,16,32,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+nav.bottom a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;min-height:56px;justify-content:center;color:var(--dim);text-decoration:none;font:700 12px var(--fd);border-radius:12px}
+nav.bottom a.on{color:var(--ink);background:var(--card)}nav.bottom svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (min-width:1100px){nav.bottom{display:none}body{padding-bottom:30px}}
+/* ventanas */
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:rgba(3,6,14,.72);backdrop-filter:blur(4px)}
+.sheet{width:min(520px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--card);border:1px solid var(--line2);border-radius:20px;padding:22px;box-shadow:var(--sh)}
+.sheet h3{margin:0 0 6px;font:800 22px var(--fd)}
+.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:14px;color:var(--dim)}
+.field input{min-height:50px;padding:0 14px;border-radius:12px;border:1px solid var(--line2);background:var(--bg2);outline:none}.field input:focus{border-color:var(--cy)}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin-top:16px}
+.msg{min-height:1.4em;margin:6px 0 0;font-size:14px;color:var(--bad)}.msg.ok{color:var(--ok)}
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:60;background:var(--card2);border:1px solid var(--line2);padding:12px 18px;border-radius:14px;box-shadow:var(--sh);max-width:calc(100% - 32px)}
+.login-hero{text-align:center;margin:8vh auto 0;max-width:460px}
+.login-hero svg{width:96px;height:96px}
+.foot{margin:26px 0 10px;text-align:center;color:var(--faint);font-size:13px}
+.sk{border-radius:12px;background:linear-gradient(90deg,var(--bg2),var(--card2),var(--bg2));background-size:200% 100%;animation:sk 1.4s linear infinite;min-height:48px}
+@keyframes sk{to{background-position:-200% 0}}
+@media (max-width:420px){.lvl .bar,.lvl small{display:none}.lvl{padding-right:6px}.logo{font-size:17px}.links{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+:focus-visible{outline:3px solid var(--cy);outline-offset:2px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap top-in">
+  <div class="logo"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffbf7a"/><stop offset="1" stop-color="#b8733d"/></linearGradient></defs><circle cx="32" cy="32" r="29" fill="#141c33" stroke="url(#lg1)" stroke-width="4"/><ellipse cx="32" cy="32" rx="25" ry="9" fill="none" stroke="#5ee0ff" stroke-width="2.5" transform="rotate(-24 32 32)"/><circle cx="32" cy="32" r="10" fill="url(#lg1)"/><circle cx="51" cy="22" r="4" fill="#5ee0ff"/></svg>Estación <span>Nil</span></div>
+  <div class="lvl" id="lvl" title="Nivel de la Estación"><b id="lvN">1</b><div><small id="lvT">0 XP</small><div class="bar"><i id="lvB" style="width:0"></i></div></div></div>
+  <i class="sync" id="sync" title=""></i>
+  <button class="ibtn" id="btnSet" aria-label="Ajustes"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg></button>
+</div></header>
+
+<main class="wrap" id="app">
+  <section class="login-hero" id="login" hidden>
+    <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#141c33" stroke="#f2a65a" stroke-width="4"/><ellipse cx="32" cy="32" rx="25" ry="9" fill="none" stroke="#5ee0ff" stroke-width="2.5" transform="rotate(-24 32 32)"/><circle cx="32" cy="32" r="10" fill="#f2a65a"/></svg>
+    <h1 style="font:800 30px var(--fd);margin:10px 0 4px">Estación Nil</h1>
+    <p class="muted">Entra con tu cuenta de Rutinator y tendrás lo mismo en el móvil y en la tableta.</p>
+    <div class="card" style="text-align:left;margin-top:18px">
+      <div class="field"><label for="lgMail">Correo de Rutinator</label><input id="lgMail" type="email" autocomplete="username" inputmode="email"></div>
+      <div class="field"><label for="lgPass">Contraseña</label><input id="lgPass" type="password" autocomplete="current-password"></div>
+      <p class="msg" id="lgMsg" aria-live="polite"></p>
+      <div class="row" style="justify-content:space-between"><button class="btn" id="lgLocal">Usar sin cuenta</button><button class="btn pri" id="lgGo">Entrar</button></div>
+    </div>
+  </section>
+
+  <div id="main" hidden>
+    <section class="hello"><div><h1 id="hi">Hola, <span>Nil</span></h1><p id="today"></p></div><div class="clock" id="clock" aria-hidden="true">--:--</div></section>
+    <div class="grid">
+      <section class="card c-hoy" id="hoy"><h2><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Hoy</h2>
+        <div id="nowBox"></div><ul class="agenda" id="agenda"></ul></section>
+      <section class="card c-cole" id="cole"><h2><span class="ico"><svg viewBox="0 0 24 24"><path d="M3 10l9-5 9 5-9 5z"/><path d="M7 12v4c3 2 7 2 10 0v-4"/></svg></span>Colegio<button class="btn sm act" id="editLinks">Editar</button></h2>
+        <div class="links" id="links"></div></section>
+      <section class="card c-rut" id="rut"><h2><span class="ico"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg></span>Rutinator</h2>
+        <div id="rutBox"></div></section>
+      <section class="card c-notas" id="notas"><h2><span class="ico"><svg viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"/><path d="M8 10h8M8 14h8M8 18h5"/></svg></span>Notas y recordatorios</h2>
+        <form class="addnote" id="noteForm" autocomplete="off"><input type="text" id="noteIn" maxlength="140" placeholder="Escribe una nota o un recordatorio…" aria-label="Nueva nota"><button class="btn pri" type="submit">Añadir</button></form>
+        <div class="chips" id="dueChips" role="group" aria-label="Para cuándo"><button type="button" class="chip on" data-due="">Sin fecha</button><button type="button" class="chip" data-due="0">Hoy</button><button type="button" class="chip" data-due="1">Mañana</button><label class="chip" data-due="x">📅 <input type="date" id="dueDate" aria-label="Otra fecha"></label></div>
+        <ul class="notes" id="notesList"></ul></section>
+      <section class="card c-juegos" id="juegos"><h2><span class="ico"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/></svg></span>Mis juegos</h2>
+        <div class="games" id="games"></div></section>
+    </div>
+    <p class="foot" id="foot"></p>
+  </div>
+</main>
+
+<nav class="bottom" id="nav" hidden>
+  <a href="#hoy" class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Hoy</a>
+  <a href="#cole"><svg viewBox="0 0 24 24"><path d="M3 10l9-5 9 5-9 5z"/><path d="M7 12v4c3 2 7 2 10 0v-4"/></svg>Colegio</a>
+  <a href="#notas"><svg viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"/><path d="M8 10h8M8 14h8"/></svg>Notas</a>
+  <a href="#juegos"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3"/></svg>Juegos</a>
+</nav>
+
+<div class="modal" id="modal" hidden><div class="sheet" role="dialog" aria-modal="true" id="sheet"></div></div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(function(){'use strict';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const CFG=Object.assign({supabaseUrl:'',supabaseKey:'',rutinatorUrl:''},window.ESTACION||{});
+const KEY='estacion-nil-v1';
+const uid=()=>(crypto.randomUUID?crypto.randomUUID():'id-'+Date.now().toString(36)+Math.random().toString(36).slice(2));
+const ymd=d=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*6e4);return z.toISOString().slice(0,10)};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+
+/* ---------- estado guardado en este aparato ---------- */
+const DEF={mode:'',device:uid(),links:null,notes:[],localPin:'',cache:{},pending:[]};
+let S;try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){S=Object.assign({},DEF)}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+save();
+const DEFAULT_LINKS=()=>[
+  {id:uid(),title:'Pronote',url:'',color:'#2fb26a',sort:0},
+  {id:uid(),title:'Pix',url:'https://app.pix.fr/connexion',color:'#6b4fe0',sort:1}];
+if(!S.links){S.links=DEFAULT_LINKS();save()}
+
+/* ---------- conexión con Supabase (la cuenta de Rutinator) ---------- */
+const CLOUD=!!(CFG.supabaseUrl&&CFG.supabaseKey&&window.supabase);
+const sb=CLOUD?window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseKey,{auth:{persistSession:true,autoRefreshToken:true,storageKey:'estacion-nil-auth'}}):null;
+let ME=null;            // fila de family_members del usuario
+let online=navigator.onLine;
+function syncDot(state,title){const d=$('#sync');d.className='sync '+(state||'');d.title=title||''}
+
+/* ---------- utilidades de interfaz ---------- */
+let toastT=null;function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,2600)}
+function modal(html,onMount){const m=$('#modal');$('#sheet').innerHTML=html;m.hidden=false;const close=()=>{m.hidden=true;$('#sheet').innerHTML=''};m.onclick=e=>{if(e.target===m)close()};
+  const k=e=>{if(e.key==='Escape'){close();removeEventListener('keydown',k)}};addEventListener('keydown',k);if(onMount)onMount(close);const f=$('#sheet input');if(f)setTimeout(()=>f.focus(),50);return close}
+const DAYS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const fmtDate=d=>d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+function dueLabel(s){if(!s)return '';const t=ymd(new Date());if(s===t)return 'hoy';if(s===ymd(addDays(new Date(),1)))return 'mañana';if(s===ymd(addDays(new Date(),-1)))return 'ayer';const d=new Date(s+'T12:00');return d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'})}
+
+/* ---------- reloj y saludo ---------- */
+function tick(){const n=new Date();$('#clock').textContent=n.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  const h=n.getHours();const g=h<6?'Buenas noches':h<13?'Buenos días':h<21?'Buenas tardes':'Buenas noches';$('#hi').innerHTML=`${g}, <span>${esc((ME&&ME.display_name)||'Nil')}</span>`;
+  $('#today').textContent=fmtDate(n).replace(/^./,c=>c.toUpperCase())}
+
+/* =================== JUEGOS: progreso leído de este aparato =================== */
+/* Todos los juegos viven en agomezbl.github.io, así que su progreso está en este mismo navegador. */
+const RANKS=[[0,'Aprendiz'],[200,'Ayudante'],[500,'Analista'],[900,'Especialista'],[1500,'Genio'],[2400,'Leyenda del Tiempo']];
+const read=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
+const GAMES=[
+  {id:'chrono-ohm',name:'Chrono-Ohm',sub:'Electricidad · viaje en el tiempo',url:'https://agomezbl.github.io/chrono-ohm/',color:'#f2a65a',
+   read(){const s=read('chrono-ohm-v1');if(!s||!(s.xp||s.introSeen))return null;const ch=s.ch||{};let done=0;Object.values(ch).forEach(c=>done+=(c&&c.done)||0);
+     const stars=Object.values(ch).reduce((a,c)=>a+Object.values((c&&c.stars)||{}).reduce((x,y)=>x+y,0),0);let r=RANKS[0][1];RANKS.forEach(([x,n])=>{if((s.xp||0)>=x)r=n});
+     return {xp:s.xp||0,done,total:30,stars,medals:Object.keys(s.ach||{}).length,label:r,at:s.savedAt||0}}},
+  {id:'philoquest',name:'PhiloQuest',sub:'Filosofía con Noctua',url:'https://agomezbl.github.io/PHYLOQUEST/',color:'#7ec8ff',
+   read(){const s=read('philoquest.v3.store');if(!s||!s.slots)return null;let best=null;Object.values(s.slots).forEach(x=>{const d=Object.keys(x.done||{}).length;if(!best||d>best.done)best={done:d,at:x.updated||0}});
+     return best?{xp:best.done*100,done:best.done,total:0,label:best.done?best.done+' llaves':'Empezado',at:best.at}:null}},
+  {id:'umbral',name:'UMBRAL',sub:'Mazmorras tácticas en 3D',url:'https://agomezbl.github.io/UMBRAL-D-D-QUEST/',color:'#c77dff',
+   read(){const s=read('umbral.save.v3');return s?{xp:0,done:0,total:0,label:'Partida en curso',at:s.savedAt||s.t||0}:null}}];
+let remoteProg={};      // {game:{data,updated_at}} lo mejor de otros aparatos
+function bestProgress(g){const loc=g.read();const rem=remoteProg[g.id];if(!rem)return loc;if(!loc)return rem;return (rem.xp||0)>(loc.xp||0)||(rem.done||0)>(loc.done||0)?rem:loc}
+function renderGames(){let totalXP=0;
+  $('#games').innerHTML=GAMES.map(g=>{const p=bestProgress(g);if(p)totalXP+=p.xp||0;const pct=p&&p.total?Math.round(p.done/p.total*100):0;
+    return `<article class="game" style="--gc:${g.color}"><div><h3>${esc(g.name)}</h3><div class="sub">${esc(g.sub)}</div></div>
+      ${p?`${p.total?`<div class="pb" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="Progreso"><i style="width:${pct}%"></i></div>`:''}
+        <div class="meta">${p.label?`<span>${esc(p.label)}</span>`:''}${p.total?`<span>${p.done}/${p.total} misiones</span>`:''}${p.xp?`<span>${p.xp} XP</span>`:''}${p.stars?`<span>★ ${p.stars}</span>`:''}${p.medals?`<span>🏅 ${p.medals}</span>`:''}</div>`
+        :`<div class="meta"><span>Aún sin empezar</span></div>`}
+      <a class="btn ${p?'pri':''}" href="${esc(g.url)}">${p?'Seguir jugando':'Empezar'}</a></article>`}).join('');
+  /* nivel de la Estación: 1 nivel cada 500 XP sumando todos los juegos */
+  const lv=1+Math.floor(totalXP/500),rest=totalXP%500;$('#lvN').textContent=lv;$('#lvT').textContent=`${totalXP} XP · nivel ${lv}`;$('#lvB').style.width=(rest/5)+'%'}
+async function pushProgress(){if(!sb||!ME)return;const rows=[];GAMES.forEach(g=>{const p=g.read();if(p)rows.push({game:g.id,device:S.device,data:p,updated_at:new Date().toISOString()})});
+  if(rows.length){const {error}=await sb.from('estacion_progress').upsert(rows,{onConflict:'member_id,game,device'});if(error)console.warn(error.message)}
+  const {data,error}=await sb.from('estacion_progress').select('game,data,updated_at').eq('member_id',ME.id);
+  if(!error&&data){remoteProg={};data.forEach(r=>{const cur=remoteProg[r.game];if(!cur||(r.data.xp||0)>(cur.xp||0)||(r.data.done||0)>(cur.done||0))remoteProg[r.game]=r.data});S.cache.prog=remoteProg;save()}}
+
+/* =================== ENLACES DEL COLEGIO =================== */
+let editLinks=false;
+const letterColor=t=>['#2fb26a','#6b4fe0','#e0704f','#2f8fd8','#c9a227','#d84f8f'][[...t].reduce((a,c)=>a+c.charCodeAt(0),0)%6];
+const logoTxt=t=>{t=(t||'?').trim();return t.length<=3?t.toLowerCase():t[0].toUpperCase()};
+function renderLinks(){const L=(S.links||[]).slice().sort((a,b)=>(a.sort||0)-(b.sort||0));
+  $('#links').innerHTML=L.map(l=>{const ok=/^https:\/\//.test(l.url||'');const inner=`<span class="lg" style="background:${esc(l.color||letterColor(l.title))}">${esc(logoTxt(l.title))}</span>${esc(l.title)}${ok?'':'<small>Falta el enlace</small>'}`;
+    const x=editLinks?`<button class="x" data-del="${esc(l.id)}" aria-label="Quitar ${esc(l.title)}">✕</button>`:'';
+    return ok&&!editLinks?`<a class="link" href="${esc(l.url)}" target="_blank" rel="noopener">${inner}</a>`:`<button class="link ${ok?'':'todo'}" data-edit="${esc(l.id)}">${inner}${x}</button>`}).join('')+
+    (editLinks?`<button class="link todo" id="addLink"><span class="lg" style="background:var(--line2)">+</span>Añadir enlace</button>`:'');
+  $('#editLinks').textContent=editLinks?'Hecho':'Editar';
+  $$('#links [data-edit]').forEach(b=>b.onclick=e=>{if(e.target.closest('[data-del]'))return;const l=S.links.find(x=>x.id===b.dataset.edit);if(!editLinks){parentGate(()=>{editLinks=true;renderLinks();linkForm(l)});return}linkForm(l)});
+  $$('#links [data-del]').forEach(b=>b.onclick=e=>{e.stopPropagation();const l=S.links.find(x=>x.id===b.dataset.del);if(!l)return;if(!confirm(`¿Quitar «${l.title}»?`))return;S.links=S.links.filter(x=>x!==l);save();renderLinks();cloudDel(l.id)});
+  const a=$('#addLink');if(a)a.onclick=()=>linkForm(null)}
+function linkForm(l){modal(`<h3>${l?'Editar enlace':'Nuevo enlace'}</h3><p class="muted small">Solo enlaces seguros (que empiezan por https://).</p>
+  <div class="field"><label for="lkT">Nombre</label><input id="lkT" maxlength="40" value="${esc(l?l.title:'')}"></div>
+  <div class="field"><label for="lkU">Dirección</label><input id="lkU" inputmode="url" placeholder="https://" value="${esc(l?l.url:'')}"></div>
+  ${l&&l.title==='Pronote'?'<p class="muted small">La dirección de Pronote es la del colegio: ábrelo una vez en el navegador, entra hasta la página de inicio de sesión y copia la dirección de arriba.</p>':''}
+  <p class="msg" id="lkMsg"></p><div class="row"><button class="btn" id="lkNo">Cancelar</button><button class="btn pri" id="lkOk">Guardar</button></div>`,close=>{
+  $('#lkNo').onclick=close;$('#lkOk').onclick=()=>{const t=$('#lkT').value.trim(),u=$('#lkU').value.trim();if(!t){$('#lkMsg').textContent='Ponle un nombre.';return}
+    if(u&&!/^https:\/\/[^\s]+\.[^\s]+/.test(u)){$('#lkMsg').textContent='La dirección debe empezar por https://';return}
+    if(l){l.title=t;l.url=u}else{l={id:uid(),title:t,url:u,color:letterColor(t),sort:S.links.length};S.links.push(l)}save();renderLinks();cloudUpsertLink(l);close()}})}
+/* la clave de padre: en la nube, la de Rutinator (la comprueba el servidor); sin cuenta, una clave local */
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('estacion|'+s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function parentGate(ok){const local=!(sb&&ME);const first=local&&!S.localPin;
+  modal(`<h3>Clave de padre</h3><p class="muted small">${local?(first?'Elige una clave para poder cambiar los enlaces en este aparato.':'Escribe la clave de este aparato.'):'La misma clave del panel de padre de Rutinator.'}</p>
+  <div class="field"><label for="pgIn">Clave</label><input id="pgIn" type="password" autocomplete="off"></div><p class="msg" id="pgMsg" aria-live="polite"></p>
+  <div class="row"><button class="btn" id="pgNo">Cancelar</button><button class="btn pri" id="pgOk">Entrar</button></div>`,close=>{
+  const go=async()=>{const v=$('#pgIn').value;if(!v)return;$('#pgOk').disabled=true;
+    try{if(local){const h=await sha(v);if(first){if(v.length<4){$('#pgMsg').textContent='Al menos 4 caracteres.';$('#pgOk').disabled=false;return}S.localPin=h;save()}else if(h!==S.localPin){$('#pgMsg').textContent='No es esa.';$('#pgOk').disabled=false;return}}
+      else{const {data,error}=await sb.rpc('verify_parent_pin',{p_pin:v});if(error||!data){$('#pgMsg').textContent=error&&/esper|wait|bloque/i.test(error.message)?'Demasiados intentos. Espera un poco.':'No es esa clave.';$('#pgOk').disabled=false;return}}
+      close();ok()}catch(e){$('#pgMsg').textContent='No he podido comprobarla. ¿Hay conexión?';$('#pgOk').disabled=false}};
+  $('#pgOk').onclick=go;$('#pgIn').onkeydown=e=>{if(e.key==='Enter')go()};$('#pgNo').onclick=close})}
+$('#editLinks').onclick=()=>{if(editLinks){editLinks=false;renderLinks();return}parentGate(()=>{editLinks=true;renderLinks()})};
+
+/* =================== NOTAS Y RECORDATORIOS =================== */
+let dueSel='';
+$$('#dueChips .chip').forEach(c=>c.onclick=e=>{if(c.dataset.due==='x'&&e.target.tagName!=='INPUT'){const i=$('#dueDate');try{i.showPicker()}catch(_){i.focus()}}
+  if(c.dataset.due!=='x'){dueSel=c.dataset.due===''?'':ymd(addDays(new Date(),+c.dataset.due));$$('#dueChips .chip').forEach(x=>x.classList.toggle('on',x===c))}});
+$('#dueDate').onchange=e=>{dueSel=e.target.value||'';$$('#dueChips .chip').forEach(x=>x.classList.toggle('on',x.dataset.due==='x'&&!!dueSel||(!dueSel&&x.dataset.due==='')))};
+$('#noteForm').onsubmit=e=>{e.preventDefault();const t=$('#noteIn').value.trim();if(!t)return;const n={id:uid(),title:t.slice(0,140),due:dueSel||null,done:false,created:Date.now()};
+  S.notes.unshift(n);save();$('#noteIn').value='';renderNotes();cloudUpsertNote(n)};
+function renderNotes(){const today=ymd(new Date());
+  const list=S.notes.slice().sort((a,b)=>(a.done-b.done)||((a.due||'9999')<(b.due||'9999')?-1:(a.due||'9999')>(b.due||'9999')?1:(b.created||0)-(a.created||0)));
+  $('#notesList').innerHTML=list.length?list.map(n=>`<li class="note ${n.done?'done':''}"><button class="tk" data-tk="${esc(n.id)}" aria-label="${n.done?'Desmarcar':'Hecho'}: ${esc(n.title)}" aria-pressed="${n.done}"></button><span class="t">${esc(n.title)}</span>${n.due?`<span class="due ${!n.done&&n.due<today?'late':''}">${esc(dueLabel(n.due))}</span>`:''}<button class="del" data-del="${esc(n.id)}" aria-label="Borrar ${esc(n.title)}">×</button></li>`).join(''):'<li class="empty">Aquí puedes apuntar deberes, exámenes o lo que no quieras olvidar.</li>';
+  $$('#notesList [data-tk]').forEach(b=>b.onclick=()=>{const n=S.notes.find(x=>x.id===b.dataset.tk);n.done=!n.done;save();renderNotes();cloudUpsertNote(n)});
+  $$('#notesList [data-del]').forEach(b=>b.onclick=()=>{const n=S.notes.find(x=>x.id===b.dataset.del);if(!n)return;S.notes=S.notes.filter(x=>x!==n);save();renderNotes();cloudDel(n.id);toast('Nota borrada')})}
+
+/* =================== NUBE: notas y enlaces en estacion_items =================== */
+/* cola: si no hay conexión, los cambios esperan en este aparato y se envían después */
+function queue(op){S.pending.push(op);save();flush()}
+function cloudUpsertNote(n){if(!sb||!ME)return;queue({t:'up',row:{id:n.id,kind:'note',title:n.title,due:n.due,done:!!n.done,sort:0}})}
+function cloudUpsertLink(l){if(!sb||!ME)return;queue({t:'up',row:{id:l.id,kind:'link',title:l.title,url:l.url||null,color:l.color||null,sort:l.sort||0}})}
+function cloudDel(id){if(!sb||!ME)return;queue({t:'del',id})}
+let flushing=false;
+async function flush(){if(!sb||!ME||flushing||!S.pending.length)return;flushing=true;
+  try{while(S.pending.length){const op=S.pending[0];let r;
+      if(op.t==='up')r=await sb.from('estacion_items').upsert(Object.assign({},op.row,{updated_at:new Date().toISOString()}));else r=await sb.from('estacion_items').delete().eq('id',op.id);
+      if(r.error){if(/fetch|network/i.test(r.error.message))break;console.warn(r.error.message)}S.pending.shift();save()}
+    syncDot(S.pending.length?'off':'ok',S.pending.length?'Cambios esperando conexión':'Sincronizado')}catch(e){syncDot('off','Sin conexión: se enviará más tarde')}
+  flushing=false}
+async function pullItems(){const {data,error}=await sb.from('estacion_items').select('*').eq('member_id',ME.id);if(error)throw error;
+  const pend=new Set(S.pending.filter(o=>o.t==='up').map(o=>o.row.id)),gone=new Set(S.pending.filter(o=>o.t==='del').map(o=>o.id));
+  const links=data.filter(r=>r.kind==='link'),notes=data.filter(r=>r.kind==='note');
+  if(!links.length&&!S.cloudLinksSeeded){S.cloudLinksSeeded=true;S.links.forEach(cloudUpsertLink)}   // primera vez: sube los enlaces de este aparato
+  else S.links=links.filter(r=>!gone.has(r.id)).map(r=>({id:r.id,title:r.title,url:r.url||'',color:r.color,sort:r.sort})).concat(S.links.filter(l=>pend.has(l.id)&&!links.some(r=>r.id===l.id)));
+  const localOnly=S.notes.filter(n=>!notes.some(r=>r.id===n.id)&&!S.notesSynced);   // notas escritas antes de entrar
+  S.notes=notes.filter(r=>!gone.has(r.id)).map(r=>{const p=S.pending.find(o=>o.t==='up'&&o.row.id===r.id);return p?{id:r.id,title:p.row.title,due:p.row.due,done:p.row.done,created:Date.parse(r.created_at)}:{id:r.id,title:r.title,due:r.due,done:r.done,created:Date.parse(r.created_at)}})
+    .concat(S.notes.filter(n=>pend.has(n.id)&&!notes.some(r=>r.id===n.id)));
+  if(localOnly.length){localOnly.forEach(n=>{S.notes.push(n);cloudUpsertNote(n)})}S.notesSynced=true;save()}
+
+/* =================== RUTINATOR: tareas, créditos, horario y agenda =================== */
+const dayIdx=d=>(d.getDay()+6)%7;   // 0 = lunes, como en Rutinator
+async function pullRutinator(){const now=new Date(),today=ymd(now),di=dayIdx(now),out={};
+  const q=await Promise.all([
+    sb.from('tasks').select('id,title,category,day_of_week,active,adhoc_date').eq('active',true),
+    sb.from('task_status').select('task_id,status,date').eq('member_id',ME.id).eq('date',today),
+    sb.from('ledger_entries').select('amount,currency').eq('member_id',ME.id).limit(20000),
+    sb.from('calendar_events').select('id,date,time,type,title,done').gte('date',today).lte('date',ymd(addDays(now,7))).order('date').order('time'),
+    sb.from('schedule_blocks').select('*').eq('day_of_week',di).order('start_min'),
+    sb.from('settings').select('week_parity').maybeSingle()]);
+  const [tk,ts,lg,ev,sch,st]=q.map(r=>r.error?null:r.data);
+  if(tk&&ts){const mine=tk.filter(t=>t.category!=='ocio'&&(t.adhoc_date?t.adhoc_date===today:t.day_of_week===di));const ok=new Set(ts.filter(s=>s.status==='pendiente'||s.status==='aprobado').map(s=>s.task_id));
+    out.tasks={total:mine.length,done:mine.filter(t=>ok.has(t.id)).length}}
+  if(lg){out.credits=Math.round(lg.filter(r=>(r.currency||'credito')==='credito').reduce((a,r)=>a+Number(r.amount),0)*10)/10;out.stars=Math.round(lg.filter(r=>r.currency==='estrella').reduce((a,r)=>a+Number(r.amount),0))}
+  if(ev)out.events=ev.slice(0,6);
+  if(sch){const par=(st&&st.week_parity)||'todas';out.blocks=sch.filter(b=>!b.parity||b.parity==='todas'||par==='todas'||b.parity===par).map(b=>({s:b.start_min,e:b.end_min,t:b.subject||b.label||b.type,room:b.room||'',kind:b.type}))}
+  out.at=Date.now();S.cache.rut=out;save();return out}
+const hm=m=>`${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+function renderHoy(){const r=S.cache.rut||{};const n=new Date(),m=n.getHours()*60+n.getMinutes();const bl=r.blocks||[];
+  const cur=bl.find(b=>b.s<=m&&m<b.e),nx=bl.find(b=>b.s>m);let html='';
+  if(cur)html=`<div class="now"><span class="ic">${cur.kind==='comida'?'🍽':'🏫'}</span><div><div class="big">${esc(cur.t)}${cur.room?` · ${esc(cur.room)}`:''}</div><div class="muted small">hasta las ${hm(cur.e)}${nx?` · luego ${esc(nx.t)}`:' · y se acabó por hoy'}</div></div></div>`;
+  else if(nx)html=`<div class="now"><span class="ic">🕐</span><div><div class="big">Próxima: ${esc(nx.t)}</div><div class="muted small">a las ${hm(nx.s)}${nx.room?` · ${esc(nx.room)}`:''}</div></div></div>`;
+  else if(sb&&ME)html=`<div class="now"><span class="ic">🌙</span><div><div class="big">Sin clases ahora</div><div class="muted small">El resto del día es tuyo.</div></div></div>`;
+  else html=`<p class="empty">Entra con tu cuenta de Rutinator para ver aquí tu horario y tu agenda.</p>`;
+  $('#nowBox').innerHTML=html;
+  const ev=(r.events||[]);$('#agenda').innerHTML=ev.length?ev.map(e=>`<li class="${e.done?'done':''}"><span class="d">${esc(dueLabel(e.date))}${e.time?`<br>${esc(e.time)}`:''}</span><span class="t">${e.type==='cita'?'📌':'🔔'} ${esc(e.title)}</span></li>`).join(''):(sb&&ME?'<li class="empty" style="background:none;border:0;padding:4px 0">Nada en la agenda esta semana.</li>':'')}
+function ring(done,total){const p=total?done/total:0,C=2*Math.PI*26;return `<svg class="ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="26" fill="none" stroke="#26324f" stroke-width="8"/><circle cx="32" cy="32" r="26" fill="none" stroke="${p>=1?'#4fd18b':'#f2a65a'}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${(C*p).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 32 32)"/></svg>`}
+function renderRut(){const r=S.cache.rut;const open=CFG.rutinatorUrl?`<a class="btn pri" style="width:100%;margin-top:12px" href="${esc(CFG.rutinatorUrl)}">Abrir Rutinator</a>`:'';
+  if(!(sb&&ME)){$('#rutBox').innerHTML=`<p class="empty">${CLOUD?'Entra con tu cuenta para ver tus tareas y créditos.':'Rutinator aparecerá aquí cuando la Estación esté conectada con su cuenta.'}</p>${open}`;return}
+  if(!r){$('#rutBox').innerHTML='<div class="sk"></div>';return}
+  const t=r.tasks||{done:0,total:0};
+  $('#rutBox').innerHTML=`<div class="stats"><div class="stat">${ring(t.done,t.total)}<span>${t.done} de ${t.total} tareas hoy</span></div><div class="stat"><b>${r.credits??'–'}</b><span>créditos</span></div><div class="stat"><b>⭐ ${r.stars??'–'}</b><span>estrellas</span></div></div>${open}`}
+
+/* =================== ARRANQUE Y SESIÓN =================== */
+function showMain(){$('#login').hidden=true;$('#main').hidden=false;$('#nav').hidden=false;tick();renderAll()}
+function renderAll(){renderHoy();renderLinks();renderRut();renderNotes();renderGames();
+  $('#foot').textContent=sb&&ME?`Conectada a Rutinator${S.cache.rut&&S.cache.rut.at?' · actualizada '+new Date(S.cache.rut.at).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}):''}`:'Solo en este aparato'}
+async function refresh(){if(!sb||!ME){syncDot('', 'Solo en este aparato');return}
+  syncDot('', 'Sincronizando…');
+  try{await flush();await pullItems();await pullRutinator();await pushProgress();syncDot(S.pending.length?'off':'ok',S.pending.length?'Cambios esperando conexión':'Sincronizado')}
+  catch(e){console.warn(e);syncDot('off','Sin conexión: mostrando lo último guardado')}
+  renderAll()}
+async function loadMe(){const {data:{user}}=await sb.auth.getUser();if(!user)return null;
+  const {data,error}=await sb.from('family_members').select('id,display_name,role,auth_user_id').eq('auth_user_id',user.id).maybeSingle();if(error)throw error;return data}
+async function start(){remoteProg=(S.cache&&S.cache.prog)||{};
+  if(!CLOUD){S.mode='local';save();showMain();syncDot('','Solo en este aparato');return}
+  let session=null;try{session=(await sb.auth.getSession()).data.session}catch(e){}
+  if(session){try{ME=await loadMe()}catch(e){ME=S.cache.me||null}if(ME){S.cache.me=ME;S.mode='cloud';save();showMain();refresh();return}}
+  if(S.mode==='local'){showMain();syncDot('','Solo en este aparato');return}
+  $('#login').hidden=false;$('#main').hidden=true;$('#nav').hidden=true}
+$('#lgGo').onclick=async()=>{const m=$('#lgMail').value.trim(),p=$('#lgPass').value;const msg=$('#lgMsg');if(!m||!p){msg.textContent='Escribe el correo y la contraseña.';return}
+  $('#lgGo').disabled=true;msg.className='msg';msg.textContent='Entrando…';
+  const {error}=await sb.auth.signInWithPassword({email:m,password:p});$('#lgGo').disabled=false;
+  if(error){msg.textContent=/fetch|network/i.test(error.message)?'No hay conexión. Prueba otra vez o usa la Estación sin cuenta.':'Correo o contraseña incorrectos.';return}
+  try{ME=await loadMe()}catch(e){ME=null}if(!ME){msg.textContent='Esta cuenta no pertenece a ninguna familia de Rutinator.';await sb.auth.signOut();return}
+  S.cache.me=ME;S.mode='cloud';save();showMain();refresh()};
+$('#lgPass').onkeydown=e=>{if(e.key==='Enter')$('#lgGo').click()};
+$('#lgLocal').onclick=()=>{S.mode='local';save();showMain();syncDot('','Solo en este aparato')};
+
+/* ajustes */
+$('#btnSet').onclick=()=>{const cloud=sb&&ME;modal(`<h3>Ajustes</h3>
+  <p class="muted">${cloud?`Conectada con la cuenta de Rutinator de <b>${esc(ME.display_name||'')}</b>. Las notas, los enlaces y el progreso de los juegos se comparten entre tus aparatos.`:CLOUD?'Estás usando la Estación sin cuenta: todo se guarda solo en este aparato.':'Esta Estación todavía no está conectada con Rutinator: todo se guarda en este aparato.'}</p>
+  <div class="row" style="justify-content:flex-start">${cloud?'<button class="btn" id="stSync">Sincronizar ahora</button><button class="btn" id="stOut">Salir de la cuenta</button>':CLOUD?'<button class="btn pri" id="stIn">Entrar con la cuenta</button>':''}<button class="btn" id="stInst">Instalar como app</button></div>
+  <p class="muted small" style="margin-top:16px">Estación Nil v1.0 · Sin publicidad. Lo que escribes solo lo ves tú (y tu padre, si entras con tu cuenta).</p>
+  <div class="row"><button class="btn pri" id="stClose">Cerrar</button></div>`,close=>{
+  $('#stClose').onclick=close;const s1=$('#stSync');if(s1)s1.onclick=()=>{close();refresh();toast('Sincronizando…')};
+  const so=$('#stOut');if(so)so.onclick=async()=>{await sb.auth.signOut();ME=null;S.mode='';S.cache={};S.pending=[];S.notesSynced=false;save();close();location.reload()};
+  const si=$('#stIn');if(si)si.onclick=()=>{S.mode='';save();close();location.reload()};
+  $('#stInst').onclick=()=>{close();install()}})};
+let deferredPrompt=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e});
+function install(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;return}
+  modal(`<h3>Instalar como app</h3><p><b>iPhone o iPad (Safari):</b> botón Compartir <span aria-hidden="true">⬆️</span> → «Añadir a pantalla de inicio».</p><p><b>Android (Chrome):</b> menú ⋮ → «Instalar aplicación» o «Añadir a pantalla de inicio».</p><div class="row"><button class="btn pri" id="ok">Entendido</button></div>`,close=>$('#ok').onclick=close)}
+
+/* navegación inferior: resalta la sección visible */
+const secs=['hoy','cole','notas','juegos'];
+const io=('IntersectionObserver' in window)?new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const id=e.target.id==='rut'?'hoy':e.target.id;$$('#nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+id))}})},{rootMargin:'-45% 0px -50% 0px'}):null;
+if(io)['hoy','cole','rut','notas','juegos'].forEach(id=>io.observe(document.getElementById(id)));
+
+/* refrescos: al volver a la pestaña, al recuperar la conexión y cada 5 minutos */
+setInterval(tick,15000);setInterval(()=>{if(!document.hidden){renderHoy()}},60000);setInterval(()=>{if(!document.hidden)refresh()},300000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){renderGames();refresh()}});
+addEventListener('online',()=>{online=true;refresh()});addEventListener('offline',()=>{online=false;syncDot('off','Sin conexión')});
+addEventListener('storage',e=>{if(e.key&&e.key!==KEY)renderGames()});   // un juego guardó en otra pestaña
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+start();
+window.__EST={get S(){return S},GAMES,renderAll,ymd};
+})();
+</script>
+</body>
+</html>
