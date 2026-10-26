@@ -3,7 +3,7 @@
    La clave «publishable/anon» es pública por diseño: lo que protege los datos son las reglas (RLS) de la base de datos.
    Si se dejan vacíos, la Estación funciona solo en este aparato, sin cuenta. */
 window.ESTACION = {
-  supabaseUrl: '',
+  supabaseUrl: 'https://rkunylxrbnndijyvisfj.supabase.co',
   supabaseKey: '',
-  rutinatorUrl: ''
+  rutinatorUrl: 'https://rutinator-v2.vercel.app/'
 };
