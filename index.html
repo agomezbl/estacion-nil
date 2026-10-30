@@ -222,6 +222,11 @@ const GAMES=[
    read(){const s=read('chrono-ohm-v1');if(!s||!(s.xp||s.introSeen))return null;const ch=s.ch||{};let done=0;Object.values(ch).forEach(c=>done+=(c&&c.done)||0);
      const stars=Object.values(ch).reduce((a,c)=>a+Object.values((c&&c.stars)||{}).reduce((x,y)=>x+y,0),0);let r=RANKS[0][1];RANKS.forEach(([x,n])=>{if((s.xp||0)>=x)r=n});
      return {xp:s.xp||0,done,total:30,stars,medals:Object.keys(s.ach||{}).length,label:r,at:s.savedAt||0}}},
+  {id:'pitagoras',name:'La Expedición Pitágoras',sub:'Pitágoras, raíces, coseno · FR/ES',url:'https://agomezbl.github.io/expedicion-pitagoras/',color:'#f2a541',unit:'cámaras',
+   read(){const s=read('expedicion-pitagoras-v1');if(!s||!(s.xp||s.prologue))return null;const st=s.stars||{};const ids=['c1','c2','c3','c7','c4','c8','c9','c10','c5','c6'];
+     const done=ids.filter(k=>(st[k]||0)>=1).length,stars=ids.reduce((a,k)=>a+(st[k]||0),0);
+     const R=[[0,'Aprendiz de la Arena'],[120,'Portador de Antorcha'],[300,'Lector de Pergaminos'],[550,'Cartógrafo del Templo'],[900,'Agrimensor Real'],[1350,'Arquitecto del Templo'],[2000,'Maestro Pitagórico'],[2800,'Discípulo de Euclides'],[3800,'Astrónomo de Alejandría'],[5000,'Leyenda Viva']];let r=R[0][1];R.forEach(([x,n])=>{if((s.xp||0)>=x)r=n});
+     return {xp:s.xp||0,done,total:10,stars,medals:Object.keys(s.relics||{}).length,label:r,at:s.updated||0}}},
   {id:'philoquest',name:'PhiloQuest',sub:'Filosofía con Noctua',url:'https://agomezbl.github.io/PHYLOQUEST/',color:'#7ec8ff',
    read(){const s=read('philoquest.v3.store');if(!s||!s.slots)return null;let best=null;Object.values(s.slots).forEach(x=>{const d=Object.keys(x.done||{}).length;if(!best||d>best.done)best={done:d,at:x.updated||0}});
      return best?{xp:best.done*100,done:best.done,total:0,label:best.done?best.done+' llaves':'Empezado',at:best.at}:null}},
@@ -233,7 +238,7 @@ function renderGames(){let totalXP=0;
   $('#games').innerHTML=GAMES.map(g=>{const p=bestProgress(g);if(p)totalXP+=p.xp||0;const pct=p&&p.total?Math.round(p.done/p.total*100):0;
     return `<article class="game" style="--gc:${g.color}"><div><h3>${esc(g.name)}</h3><div class="sub">${esc(g.sub)}</div></div>
       ${p?`${p.total?`<div class="pb" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="Progreso"><i style="width:${pct}%"></i></div>`:''}
-        <div class="meta">${p.label?`<span>${esc(p.label)}</span>`:''}${p.total?`<span>${p.done}/${p.total} misiones</span>`:''}${p.xp?`<span>${p.xp} XP</span>`:''}${p.stars?`<span>★ ${p.stars}</span>`:''}${p.medals?`<span>🏅 ${p.medals}</span>`:''}</div>`
+        <div class="meta">${p.label?`<span>${esc(p.label)}</span>`:''}${p.total?`<span>${p.done}/${p.total} ${esc(g.unit||'misiones')}</span>`:''}${p.xp?`<span>${p.xp} XP</span>`:''}${p.stars?`<span>★ ${p.stars}</span>`:''}${p.medals?`<span>🏅 ${p.medals}</span>`:''}</div>`
         :`<div class="meta"><span>Aún sin empezar</span></div>`}
       <a class="btn ${p?'pri':''}" href="${esc(g.url)}">${p?'Seguir jugando':'Empezar'}</a></article>`}).join('');
   /* nivel de la Estación: 1 nivel cada 500 XP sumando todos los juegos */
