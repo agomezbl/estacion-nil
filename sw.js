@@ -1,5 +1,5 @@
 /* Estación Nil · funciona sin conexión: guarda la app y la librería de Supabase; los datos van siempre por la red */
-const V = 'estacion-v1.0.3';
+const V = 'estacion-v1.0.4';
 const SHELL = ['./', 'index.html', 'config.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.js'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(V).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });

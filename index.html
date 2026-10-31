@@ -215,13 +215,13 @@ function tick(){const n=new Date();$('#clock').textContent=n.toLocaleTimeString(
 
 /* =================== JUEGOS: progreso leído de este aparato =================== */
 /* Todos los juegos viven en agomezbl.github.io, así que su progreso está en este mismo navegador. */
-const RANKS=[[0,'Aprendiz'],[200,'Ayudante'],[500,'Analista'],[900,'Especialista'],[1500,'Genio'],[2400,'Leyenda del Tiempo']];
+const RANKS=[[0,'Aprendiz'],[200,'Ayudante'],[500,'Analista'],[900,'Especialista'],[1500,'Genio'],[2400,'Leyenda del Tiempo'],[3500,'Ingeniería de redes'],[5000,'Maestría de nudos'],[7000,'Arquitectura de la corriente'],[9500,'Guardián de la Red']];
 const read=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
 const GAMES=[
   {id:'chrono-ohm',name:'Chrono-Ohm',sub:'Electricidad · viaje en el tiempo',url:'https://agomezbl.github.io/chrono-ohm/',color:'#f2a65a',
    read(){const s=read('chrono-ohm-v1');if(!s||!(s.xp||s.introSeen))return null;const ch=s.ch||{};let done=0;Object.values(ch).forEach(c=>done+=(c&&c.done)||0);
      const stars=Object.values(ch).reduce((a,c)=>a+Object.values((c&&c.stars)||{}).reduce((x,y)=>x+y,0),0);let r=RANKS[0][1];RANKS.forEach(([x,n])=>{if((s.xp||0)>=x)r=n});
-     return {xp:s.xp||0,done,total:30,stars,medals:Object.keys(s.ach||{}).length,label:r,at:s.savedAt||0}}},
+     return {xp:s.xp||0,done,total:68,stars,medals:Object.keys(s.ach||{}).length,label:r,at:s.savedAt||0}}},
   {id:'pitagoras',name:'La Expedición Pitágoras',sub:'Pitágoras, raíces, coseno · FR/ES',url:'https://agomezbl.github.io/expedicion-pitagoras/',color:'#f2a541',unit:'cámaras',
    read(){const s=read('expedicion-pitagoras-v1');if(!s||!(s.xp||s.prologue))return null;const st=s.stars||{};const ids=['c1','c2','c3','c7','c4','c8','c9','c10','c5','c6'];
      const done=ids.filter(k=>(st[k]||0)>=1).length,stars=ids.reduce((a,k)=>a+(st[k]||0),0);
