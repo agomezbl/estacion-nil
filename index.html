@@ -240,7 +240,7 @@ function renderGames(){let totalXP=0;
       ${p?`${p.total?`<div class="pb" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="Progreso"><i style="width:${pct}%"></i></div>`:''}
         <div class="meta">${p.label?`<span>${esc(p.label)}</span>`:''}${p.total?`<span>${p.done}/${p.total} ${esc(g.unit||'misiones')}</span>`:''}${p.xp?`<span>${p.xp} XP</span>`:''}${p.stars?`<span>★ ${p.stars}</span>`:''}${p.medals?`<span>🏅 ${p.medals}</span>`:''}</div>`
         :`<div class="meta"><span>Aún sin empezar</span></div>`}
-      <a class="btn ${p?'pri':''}" href="${esc(g.url)}">${p?'Seguir jugando':'Empezar'}</a></article>`}).join('');
+      <a class="btn ${p?'pri':''}" href="${esc(g.url)}" target="_blank" rel="noopener">${p?'Seguir jugando':'Empezar'}</a></article>`}).join('');
   /* nivel de la Estación: 1 nivel cada 500 XP sumando todos los juegos */
   const lv=1+Math.floor(totalXP/500),rest=totalXP%500;$('#lvN').textContent=lv;$('#lvT').textContent=`${totalXP} XP · nivel ${lv}`;$('#lvB').style.width=(rest/5)+'%'}
 async function pushProgress(){if(!sb||!ME)return;const rows=[];GAMES.forEach(g=>{const p=g.read();if(p)rows.push({game:g.id,device:S.device,data:p,updated_at:new Date().toISOString()})});
