@@ -129,6 +129,11 @@ nav.bottom a.on{color:var(--ink);background:var(--card)}nav.bottom svg{width:24p
 </div></header>
 
 <main class="wrap" id="app">
+  <section class="card" id="mudanza" hidden style="margin-top:18px;border-color:#d9a441;background:linear-gradient(180deg,#22304f,#141c33)">
+    <h2 style="color:#ffd27a;margin:0 0 6px">🚀 La Estación se muda a Curionauta</h2>
+    <p class="muted" style="margin:0 0 12px">Tu nueva Estación tiene mentor, cuaderno de vuelo y los juegos en el mismo sitio. Pulsa el botón y tus partidas, notas y enlaces viajan contigo (desde este aparato).</p>
+    <div class="row" style="justify-content:flex-start;margin:0"><button class="btn pri" id="mvGo">Llevar mis partidas</button><span class="muted small" id="mvMsg"></span></div>
+  </section>
   <section class="login-hero" id="login" hidden>
     <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#141c33" stroke="#f2a65a" stroke-width="4"/><ellipse cx="32" cy="32" rx="25" ry="9" fill="none" stroke="#5ee0ff" stroke-width="2.5" transform="rotate(-24 32 32)"/><circle cx="32" cy="32" r="10" fill="#f2a65a"/></svg>
     <h1 style="font:800 30px var(--fd);margin:10px 0 4px">Estación Nil</h1>
@@ -177,7 +182,7 @@ nav.bottom a.on{color:var(--ink);background:var(--card)}nav.bottom svg{width:24p
 (function(){'use strict';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const CFG=Object.assign({supabaseUrl:'',supabaseKey:'',rutinatorUrl:''},window.ESTACION||{});
+const CFG=Object.assign({supabaseUrl:'',supabaseKey:'',rutinatorUrl:'',nuevaUrl:''},window.ESTACION||{});
 const KEY='estacion-nil-v1';
 const uid=()=>(crypto.randomUUID?crypto.randomUUID():'id-'+Date.now().toString(36)+Math.random().toString(36).slice(2));
 const ymd=d=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*6e4);return z.toISOString().slice(0,10)};
@@ -403,6 +408,17 @@ addEventListener('online',()=>{online=true;refresh()});addEventListener('offline
 addEventListener('storage',e=>{if(e.key&&e.key!==KEY)renderGames()});   // un juego guardó en otra pestaña
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 start();
+
+/* =================== MUDANZA a curionauta.com =================== */
+/* Lleva todo lo guardado en este navegador (los juegos viven en esta misma dirección) a la
+   Estación nueva, dentro del propio enlace: nada pasa por ningún servidor. */
+(function(){const NEW=CFG.nuevaUrl||'';if(!NEW)return;const box=document.getElementById('mudanza');box.hidden=false;
+  const b64=u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')};
+  document.getElementById('mvGo').onclick=async()=>{const keys={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(/auth|^sb-|fake-sess/i.test(k))continue;keys[k]=localStorage.getItem(k)}
+    const raw=new TextEncoder().encode(JSON.stringify({v:1,from:location.origin,at:Date.now(),keys}));let tag='j.',data=raw;
+    try{if('CompressionStream' in window){data=new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer());tag='g.'}}catch(e){data=raw;tag='j.'}
+    const url=NEW+'#mudanza='+tag+b64(data);if(url.length>1800000){document.getElementById('mvMsg').textContent='Hay demasiados datos para un enlace. Avisa a papá.';return}
+    location.href=url}})();
 window.__EST={get S(){return S},GAMES,renderAll,ymd};
 })();
 </script>
