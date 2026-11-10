@@ -130,7 +130,7 @@ nav.bottom a.on{color:var(--ink);background:var(--card)}nav.bottom svg{width:24p
 
 <main class="wrap" id="app">
   <section class="card" id="mudanza" hidden style="margin-top:18px;border-color:#d9a441;background:linear-gradient(180deg,#22304f,#141c33)">
-    <h2 style="color:#ffd27a;margin:0 0 6px">🚀 La Estación se muda a Curionauta</h2>
+    <h2 style="color:#ffd27a;margin:0 0 6px">🚀 La Estación se muda a Curionaut</h2>
     <p class="muted" style="margin:0 0 12px">Tu nueva Estación tiene mentor, cuaderno de vuelo y los juegos en el mismo sitio. Pulsa el botón y tus partidas, notas y enlaces viajan contigo (desde este aparato).</p>
     <div class="row" style="justify-content:flex-start;margin:0"><button class="btn pri" id="mvGo">Llevar mis partidas</button><span class="muted small" id="mvMsg"></span></div>
   </section>
@@ -409,7 +409,7 @@ addEventListener('storage',e=>{if(e.key&&e.key!==KEY)renderGames()});   // un ju
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 start();
 
-/* =================== MUDANZA a curionauta.com =================== */
+/* =================== MUDANZA a curionaut.org =================== */
 /* Lleva todo lo guardado en este navegador (los juegos viven en esta misma dirección) a la
    Estación nueva, dentro del propio enlace: nada pasa por ningún servidor. */
 (function(){const NEW=CFG.nuevaUrl||'';if(!NEW)return;const box=document.getElementById('mudanza');box.hidden=false;

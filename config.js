@@ -5,5 +5,7 @@
 window.ESTACION = {
   supabaseUrl: 'https://rkunylxrbnndijyvisfj.supabase.co',
   supabaseKey: 'sb_publishable_KhfVpiIf3dmRJ7C9ZJcwEw_ypS98OM7',
-  rutinatorUrl: 'https://rutinator-v2.vercel.app/'
+  rutinatorUrl: 'https://rutinator-v2.vercel.app/',
+  // La Estación nueva: muestra el recuadro «Llevar mis partidas» para mudarse allí
+  nuevaUrl: 'https://curionaut.org/estacion/'
 };
